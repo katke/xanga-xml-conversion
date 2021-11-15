@@ -11,9 +11,6 @@ import xml.etree.ElementTree as elementTree
 # xmlns:dc="http://purl.org/dc/elements/1.1/"
 # xmlns:wp="http://wordpress.org/export/1.1/">
 
-# IDS_NS   =  "http://whatever/the/IDS/namespace/value/is" #adjust this to the real IDS NS
-# ET.register_namespace("IDS", IDS_NS)
-# et.SubElement(root, et.QName(IDS_NS, "OwnedPropertyRentNetCust"))
 
 # for filename in sys.argv[1:]:
 def parse_file(xmlFile):
@@ -25,19 +22,28 @@ def parse_file(xmlFile):
         "wp": "http://wordpress.org/export/1.1/"
     }
     result = ""
-    # elementTree.register_namespace("content", CONTENT_NS)
     for item in root.findall(".//item"):
         title = item.find("title").text
         if title is None:
             title = "No title"
         blog_post = item.find("content:encoded", namespaces).text
-        comment_section = item.find("wp:comment", namespaces)
-        comments = comment_section.findall("wp:comment_content", namespaces)
+        comment_section = item.findall("wp:comment", namespaces)
+        comment_markup = ""
+        if len(comment_section) > 0:
+            for comment in comment_section:
+                comment_content = comment.find("wp:comment_content", namespaces).text
+                comment_date = comment.find("wp:comment_date", namespaces).text
+                comment_author = comment.find("wp:comment_author", namespaces).text
+                comment_author_url = comment.find("wp:comment_author_url", namespaces).text
+                comment_markup_template = "<div>{0}<br/>{1}<br/><a href=\"{2}\">{3}</a><br/></div><hr>"
+                comment_markup += comment_markup_template.format(comment_content, comment_date, comment_author_url, comment_author)
+        else:
+            comment_markup = "<p>No comments to display.</p>"
         dateString = item.find("pubDate").text
         dateStringWithoutColon = dateString[:-3] + dateString[-2:]
         date = datetime.datetime.strptime(dateStringWithoutColon, "%a, %d %b %Y %H:%M:%S %z")
-        htmlTemplateString = "<h3>{0}</h3><div>{1}</div>\n"
-        result += htmlTemplateString.format(date, blog_post)
+        htmlTemplateString = "<h1>{0}</h1><h4>{1}</h4><div>{2}</div>\n<h3>Comments</h3>{3}"
+        result += htmlTemplateString.format(title, date, blog_post, comment_markup)
     with open("html_xanga.html", "w") as f:
         f.write(result)
 #
