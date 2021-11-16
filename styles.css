@@ -4,11 +4,14 @@ div.post {
 
 div.comment:not(:last-child) {
     border-bottom: 1px black dotted;
-    padding: 10px;
 }
 
 div.comment p {
     margin: 5px;
+}
+
+div.comment {
+    padding: 10px;
 }
 
 div.comment div.content {
