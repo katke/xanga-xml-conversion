@@ -1,0 +1,24 @@
+div.post {
+    padding: 10px;
+}
+
+div.comment:not(:last-child) {
+    border-bottom: 1px black dotted;
+    padding: 10px;
+}
+
+div.comment p {
+    margin: 5px;
+}
+
+div.comment div.content {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 1.3rem;
+}
+
+div.comments-section {
+    margin-left: 30px;
+    padding: 15px;
+    border: 1px black solid;
+}

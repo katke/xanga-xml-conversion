@@ -21,7 +21,7 @@ def parse_file(xmlFile):
         "content": "http://purl.org/rss/1.0/modules/content/",
         "wp": "http://wordpress.org/export/1.1/"
     }
-    result = ""
+    result = "<link rel=\"stylesheet\" href=\"./styles.css\" />"
     for item in root.findall(".//item"):
         title = item.find("title").text
         if title is None:
@@ -35,15 +35,16 @@ def parse_file(xmlFile):
                 comment_date = comment.find("wp:comment_date", namespaces).text
                 comment_author = comment.find("wp:comment_author", namespaces).text
                 comment_author_url = comment.find("wp:comment_author_url", namespaces).text
-                comment_markup_template = "<div>{0}<br/>{1}<br/><a href=\"{2}\">{3}</a><br/></div><hr>"
-                comment_markup += comment_markup_template.format(comment_content, comment_date, comment_author_url, comment_author)
+                comment_markup_template = "<div class=\"comment\"><p>{0}</p><a href=\"{1}\">{2}</a> wrote:<div class=\"content\">{3}</div></div>"
+                comment_markup += comment_markup_template.format(comment_date, comment_author_url, comment_author, comment_content)
         else:
             comment_markup = "<p>No comments to display.</p>"
+        wrapped_comment_markup = "<div class=\"comments-section\"><h2>Comments</h2>{0}</div>".format(comment_markup)
         dateString = item.find("pubDate").text
         dateStringWithoutColon = dateString[:-3] + dateString[-2:]
         date = datetime.datetime.strptime(dateStringWithoutColon, "%a, %d %b %Y %H:%M:%S %z")
-        htmlTemplateString = "<h1>{0}</h1><h4>{1}</h4><div>{2}</div>\n<h3>Comments</h3>{3}"
-        result += htmlTemplateString.format(title, date, blog_post, comment_markup)
+        htmlTemplateString = "<div class=\"post\"><h1 class=\"post-title\">{0}</h1><h4 class=\"post-date\">{1}</h4><div class=\"post-content\">{2}</div>{3}</div>"
+        result += htmlTemplateString.format(title, date, blog_post, wrapped_comment_markup)
     with open("html_xanga.html", "w") as f:
         f.write(result)
 #
