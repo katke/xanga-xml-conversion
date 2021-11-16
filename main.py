@@ -20,9 +20,9 @@ def parse_file(xml_file):
         comment_section = item.findall("wp:comment", XML_NAMESPACES)
         comment_markup = generate_comments(comment_section)
         wrapped_comment_markup = "<div class=\"comments-section\"><h2>Comments</h2>{0}</div>".format(comment_markup)
-        dateString = item.find("wp:post_date", XML_NAMESPACES).text
-        htmlTemplateString = "<div class=\"post\"><h2 class=\"post-date\">{0}</h2><div class=\"post-content\">{1}</div>{2}</div>"
-        result += htmlTemplateString.format(dateString, blog_post, wrapped_comment_markup)
+        date_string = item.find("wp:post_date", XML_NAMESPACES).text
+        html_template_string = "<div class=\"post\"><h2 class=\"post-date\">{0}</h2><div class=\"post-content\">{1}</div>{2}</div>"
+        result += html_template_string.format(date_string, blog_post, wrapped_comment_markup)
     return result
 
 def generate_comments(comments):
